@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details and Reviews</title>
+    <style>
+        body {
+            overflow-y: scroll;
+        }
+
+
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .poster {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="poster" id="posterSection">
+        <!-- Poster will be inserted here -->
+    </div>
+
+    <table id="movieDetails">
+        <!-- Movie details will be inserted here -->
+        <tr>
+            <th>Title</th>
+            <td id="title"></td>
+        </tr>
+        <tr>
+            <th>Year of Release</th>
+            <td id="releaseDate"></td>
+        </tr>
+        <tr>
+            <th>Rating</th>
+            <td id="rating"></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td id="description"></td>
+        </tr>
+        <tr>
+            <th>Genres</th>
+            <td id="genres"></td>
+        </tr>
+        <tr>
+            <th>Runtime</th>
+            <td id="runtime"></td>
+        </tr>
+        <!-- Add more details as needed -->
+    </table>
+
+    <a href="index.html" class="btn btn-primary">Back to Index</a>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('movieId');
+        const apiKey = "81b513b14e6d63ac6ceea2ff873f5854";
+        const apiURL = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}`;
+
+        fetch(apiURL)
+            .then(response => response.json())
+            .then(data => {
+                const posterSection = document.getElementById("posterSection");
+                const posterURL = `https://image.tmdb.org/t/p/w500/${data.poster_path}`;
+                const title = data.title;
+                const releaseDate = data.release_date ? data.release_date.substring(0, 4) : 'N/A';
+                const rating = data.vote_average;
+                const description = data.overview;
+                const genres = data.genres.map(genre => genre.name).join(', ');
+                const runtime = data.runtime;
+
+                // Display poster
+                const posterImg = document.createElement("img");
+                posterImg.src = posterURL;
+                posterImg.alt = title;
+                posterImg.style.maxWidth = "300px";
+                posterSection.appendChild(posterImg);
+
+                // Display movie details
+                document.getElementById("title").innerText = title;
+                document.getElementById("releaseDate").innerText = releaseDate;
+                document.getElementById("rating").innerText = rating;
+                document.getElementById("description").innerText = description;
+                document.getElementById("genres").innerText = genres;
+                document.getElementById("runtime").innerText = `${runtime} minutes`;
+                // Add more details as needed
+            })
+            .catch(error => console.log(error.message));
+    </script>
+</body>
+
+</html>
